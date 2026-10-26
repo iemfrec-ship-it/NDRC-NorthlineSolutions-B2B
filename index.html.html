@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NORTHLINE SOLUTIONS</title>
+<style>
+:root{
+  --blue:#2E5AFF; --violet:#7C3AED; --coral:#FF6B6B; --turquoise:#14C7B4;
+  --bg:#F5F6FB; --card:#FFFFFF; --border:#E4E7F2; --text:#1B1E2B; --muted:#6B7285;
+  --grad: linear-gradient(135deg, var(--blue), var(--violet));
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+.page{display:none;min-height:100vh;}
+.page.active{display:block;}
+.wrap{max-width:960px;margin:0 auto;padding:24px 20px 80px;}
+h1,h2,h3{font-weight:800;letter-spacing:-0.01em;}
+a{color:inherit;}
+button{font-family:inherit;cursor:pointer;border:none;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:10px;font-weight:700;font-size:0.92rem;transition:transform .15s, box-shadow .15s;}
+.btn:active{transform:scale(0.98);}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 8px 20px rgba(46,90,255,0.25);}
+.btn-primary:hover{box-shadow:0 10px 26px rgba(46,90,255,0.35);}
+.btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text);}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue);}
+.btn-coral{background:var(--coral);color:#fff;}
+.btn-turquoise{background:var(--turquoise);color:#053b35;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:0.4;cursor:not-allowed;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;}
+.pill{display:inline-block;padding:4px 12px;border-radius:99px;font-size:0.72rem;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;}
+.pill-junior{background:#E7F0FF;color:var(--blue);}
+.pill-confirme{background:#F1E9FE;color:var(--violet);}
+.pill-expert{background:#FFE9E9;color:var(--coral);}
+.input-label{display:block;font-size:0.75rem;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.03em;}
+.input-field{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:0.95rem;font-family:inherit;outline:none;transition:border-color .15s;background:#fff;color:var(--text);}
+.input-field:focus{border-color:var(--blue);}
+.field-group{margin-bottom:16px;}
+.alert{padding:12px 14px;border-radius:10px;font-size:0.85rem;margin-top:10px;display:none;}
+.alert.show{display:block;}
+.alert-error{background:#FFEAEA;color:#C4302B;border:1px solid #FFCACA;}
+.alert-warning{background:#FFF6E0;color:#8A6300;border:1px solid #FFE6A3;}
+
+/* HOME */
+#page-home .hero{text-align:center;padding:60px 20px 30px;}
+.logo{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-0.02em;}
+.tagline{color:var(--muted);font-size:0.95rem;margin-top:6px;}
+.home-cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-top:36px;}
+.home-card{flex:1;min-width:280px;max-width:400px;text-align:left;}
+.home-card .card-icon{font-size:1.8rem;margin-bottom:10px;}
+.rgpd-link{display:block;text-align:center;margin-top:24px;font-size:0.8rem;color:var(--muted);text-decoration:underline;background:none;}
+
+/* LEVEL SELECT */
+.level-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:24px;}
+.level-card{border-radius:16px;padding:26px;border:1.5px solid var(--border);background:#fff;text-align:left;transition:transform .15s, box-shadow .15s;position:relative;overflow:hidden;}
+.level-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,20,40,0.08);}
+.level-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;}
+.level-card.junior::before{background:var(--blue);}
+.level-card.confirme::before{background:var(--violet);}
+.level-card.expert::before{background:var(--coral);}
+.level-name{font-size:1.25rem;font-weight:800;margin:10px 0 6px;}
+.level-desc{color:var(--muted);font-size:0.88rem;line-height:1.5;margin-bottom:14px;}
+.level-progress{font-size:0.78rem;color:var(--muted);margin-bottom:14px;}
+
+/* HUD */
+#hud{display:none;position:sticky;top:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:12px 20px;z-index:100;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+#hud.visible{display:flex;}
+.hud-id{font-weight:800;font-size:0.85rem;}
+.hud-level{font-size:0.78rem;color:var(--muted);}
+.hud-back{font-size:0.78rem;color:var(--blue);background:none;font-weight:700;}
+
+/* FLOATING PDF BUTTON */
+#pdf-float{position:fixed;bottom:20px;right:20px;z-index:200;background:var(--grad);color:#fff;border-radius:99px;padding:14px 20px;font-weight:700;font-size:0.85rem;box-shadow:0 10px 26px rgba(46,90,255,0.35);display:none;align-items:center;gap:8px;}
+#pdf-float.visible{display:inline-flex;}
+
+/* SCENARIO */
+.scenario-box{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;border-left:5px solid var(--blue);}
+.scenario-box.confirme{border-left-color:var(--violet);}
+.scenario-box.expert{border-left-color:var(--coral);}
+.scenario-eyebrow{font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;}
+.scenario-text{font-size:0.98rem;line-height:1.7;}
+.threshold-note{margin-top:14px;font-size:0.85rem;background:#F1F4FF;border-radius:8px;padding:10px 14px;color:var(--blue);font-weight:600;}
+
+/* EXERCISE */
+.ex-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+.ex-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.ex-badge{font-size:0.68rem;font-weight:800;letter-spacing:0.04em;background:#F1F4FF;color:var(--blue);padding:4px 10px;border-radius:6px;text-transform:uppercase;}
+.ex-title{font-weight:800;font-size:0.98rem;}
+.ex-status{margin-left:auto;font-size:0.78rem;font-weight:700;}
+.ex-status.done{color:var(--turquoise);}
+.q-block{background:#FAFBFF;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
+.q-text{font-weight:700;font-size:0.92rem;margin-bottom:10px;}
+.opt-label{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;font-size:0.88rem;transition:all .12s;}
+.opt-label:hover{border-color:var(--blue);background:#F7F9FF;}
+.opt-label input{margin-top:2px;accent-color:var(--blue);}
+.opt-label.correct{background:#E6FBF7;border-color:var(--turquoise);}
+.opt-label.wrong{background:#FFEAEA;border-color:var(--coral);}
+.tf-row{display:flex;gap:10px;}
+.tf-btn{flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-weight:700;font-size:0.8rem;color:var(--muted);}
+.tf-btn.sel{border-color:var(--blue);color:var(--blue);background:#F1F4FF;}
+.tf-btn.correct{border-color:var(--turquoise);background:#E6FBF7;color:#0A8F7D;}
+.tf-btn.wrong{border-color:var(--coral);background:#FFEAEA;color:#C4302B;}
+.result-box{margin-top:16px;padding:16px;border-radius:12px;background:#F7F9FF;text-align:center;display:none;}
+.result-box.show{display:block;}
+.result-score{font-size:1.6rem;font-weight:900;}
+.result-score.pass{color:var(--turquoise);}
+.result-score.fail{color:var(--coral);}
+.consult-box{padding:14px;border-radius:10px;background:#F7F9FF;font-size:0.85rem;color:var(--muted);margin-bottom:12px;}
+
+/* SPLIT SCREEN READING */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media (max-width:820px){.split{grid-template-columns:1fr;}}
+.split .text-pane{background:#FDFDFB;border:1px solid #E7E2D5;border-radius:12px;padding:20px;font-family:Georgia,serif;font-size:0.92rem;line-height:1.75;max-height:560px;overflow-y:auto;position:sticky;top:80px;}
+@media (max-width:820px){.split .text-pane{position:relative;top:0;max-height:320px;}}
+.split .text-pane .email-meta{font-size:0.78rem;color:#8a8060;margin-bottom:12px;border-bottom:1px solid #E7E2D5;padding-bottom:10px;}
+.split .q-pane{max-height:560px;overflow-y:auto;padding-right:4px;}
+@media (max-width:820px){.split .q-pane{max-height:none;}}
+
+/* MATCHING */
+.bank{display:flex;flex-wrap:wrap;gap:8px;padding:14px;background:#FAFBFF;border:1px solid var(--border);border-radius:10px;margin-bottom:16px;min-height:50px;}
+.bank-label{font-size:0.72rem;font-weight:700;color:var(--muted);width:100%;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:8px;}
+.word{background:#fff;border:1.5px solid var(--blue);color:var(--blue);border-radius:8px;padding:7px 12px;font-size:0.82rem;font-weight:700;cursor:grab;user-select:none;}
+.word:hover{background:#F1F4FF;}
+.match-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.match-def{flex:1;background:#FAFBFF;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:0.86rem;}
+.match-slot{width:180px;flex-shrink:0;min-height:38px;border:2px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;color:var(--muted);cursor:pointer;padding:6px;text-align:center;}
+.match-slot.filled{border-style:solid;border-color:var(--blue);color:var(--blue);background:#F1F4FF;}
+.match-slot.correct{border-color:var(--turquoise);background:#E6FBF7;color:#0A8F7D;}
+.match-slot.wrong{border-color:var(--coral);background:#FFEAEA;color:#C4302B;}
+@media (max-width:600px){.match-row{flex-direction:column;align-items:stretch;}.match-slot{width:100%;}}
+
+/* ORAL */
+.info-float-btn{position:fixed;bottom:90px;right:20px;z-index:180;background:#fff;border:2px solid var(--violet);color:var(--violet);border-radius:99px;padding:12px 18px;font-weight:800;font-size:0.82rem;box-shadow:0 8px 20px rgba(124,58,237,0.2);display:none;align-items:center;gap:6px;}
+.info-float-btn.visible{display:inline-flex;}
+.info-modal{display:none;position:fixed;inset:0;background:rgba(20,20,35,0.55);z-index:300;align-items:flex-end;justify-content:center;}
+@media (min-width:700px){.info-modal{align-items:center;}}
+.info-modal.show{display:flex;}
+.info-modal-box{background:#fff;border-radius:20px 20px 0 0;padding:26px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;}
+@media (min-width:700px){.info-modal-box{border-radius:16px;}}
+.info-modal-title{font-weight:800;font-size:1.05rem;margin-bottom:14px;}
+.info-sheet{background:#FAFBFF;border-radius:10px;padding:14px;margin-bottom:12px;font-size:0.86rem;line-height:1.7;}
+.info-sheet strong{color:var(--violet);}
+.arg-list{margin-top:6px;padding-left:18px;}
+.arg-list li{margin-bottom:5px;font-size:0.85rem;}
+.situation-box{background:#FFF6EE;border-left:4px solid var(--coral);border-radius:0 10px 10px 0;padding:16px;margin-bottom:16px;font-size:0.92rem;line-height:1.6;font-style:italic;}
+.score-row{display:flex;align-items:center;gap:12px;margin:16px 0;flex-wrap:wrap;}
+.score-row label{font-size:0.85rem;font-weight:700;color:var(--muted);}
+.score-input{width:80px;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-weight:800;font-size:1.1rem;text-align:center;color:var(--violet);}
+
+/* MEMO */
+.memo-box{background:#FDFDFB;border:1px solid #E7E2D5;border-radius:12px;padding:20px;font-family:Georgia,serif;font-size:0.92rem;line-height:1.75;margin-bottom:16px;}
+.memo-head{font-size:0.78rem;color:#8a8060;margin-bottom:12px;border-bottom:1px solid #E7E2D5;padding-bottom:10px;}
+
+/* TEACHER */
+.teacher-code{font-weight:900;font-size:1.3rem;letter-spacing:0.15em;background:#F1F4FF;color:var(--blue);padding:8px 18px;border-radius:8px;display:inline-block;}
+details{margin-bottom:10px;}
+summary{cursor:pointer;font-weight:700;font-size:0.9rem;padding:10px 0;color:var(--violet);}
+.recap-list{padding-left:0;list-style:none;font-size:0.86rem;line-height:1.9;color:var(--text);}
+.recap-list li{padding-left:16px;position:relative;}
+.recap-list li::before{content:'—';position:absolute;left:0;color:var(--muted);}
+
+footer{text-align:center;padding:30px 20px;font-size:0.72rem;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div id="hud">
+  <div><span class="hud-id" id="hud-id">—</span> <span class="hud-level" id="hud-level"></span></div>
+  <button class="hud-back" onclick="goHome()">← Accueil</button>
+</div>
+
+<button id="pdf-float" onclick="downloadPDF()">📄 Télécharger le PDF</button>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="wrap">
+    <div class="hero">
+      <div class="logo">NORTHLINE SOLUTIONS</div>
+      <div class="tagline">English for B2B Sales — BTS NDRC</div>
+    </div>
+    <div class="home-cards">
+      <div class="card home-card">
+        <div class="card-icon">🎓</div>
+        <h3 style="margin-bottom:14px;">Student Access</h3>
+        <div class="field-group">
+          <label class="input-label">Your ID (XX-YY)</label>
+          <input type="text" id="student-id-input" class="input-field" placeholder="e.g. JU-LI" maxlength="5" style="text-transform:uppercase;">
+        </div>
+        <div class="field-group">
+          <label class="input-label">Access code</label>
+          <input type="text" id="student-code-input" class="input-field" placeholder="Enter access code" maxlength="14" style="text-transform:uppercase;">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="studentLogin()">Start</button>
+        <div id="student-error" class="alert alert-error"></div>
+      </div>
+      <div class="card home-card">
+        <div class="card-icon">🔐</div>
+        <h3 style="margin-bottom:14px;">Teacher Access</h3>
+        <div class="field-group">
+          <label class="input-label">Access code</label>
+          <input type="password" id="teacher-code-input" class="input-field" placeholder="••••" maxlength="6">
+        </div>
+        <button class="btn btn-outline btn-block" onclick="teacherLogin()">Enter dashboard</button>
+        <div id="teacher-error" class="alert alert-error"></div>
+      </div>
+    </div>
+    <button class="rgpd-link" onclick="showPage('page-rgpd')">🔒 Conditions RGPD</button>
+  </div>
+</div>
+
+<!-- RGPD -->
+<div id="page-rgpd" class="page">
+  <div class="wrap" style="max-width:700px;">
+    <div class="card">
+      <h3 style="color:var(--blue);margin-bottom:16px;">Protection des données personnelles</h3>
+      <p style="color:var(--muted);margin-bottom:16px;font-size:0.92rem;">Cette application est un outil pédagogique développé pour un usage en classe.</p>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:0.88rem;line-height:1.6;">
+        <div style="padding:12px 16px;background:#F1F4FF;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;">Aucune donnée n'est transmise à un serveur externe : toutes les informations (identifiant, réponses, score) restent uniquement dans la mémoire locale de votre appareil (stockage local du navigateur).</div>
+        <div style="padding:12px 16px;background:#F1F4FF;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;">Aucun cookie tiers, aucun traceur publicitaire, aucun appel à une API externe n'est utilisé.</div>
+        <div style="padding:12px 16px;background:#F1F4FF;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;">La seule donnée saisie est votre identifiant au format XX-YY (deux lettres du prénom, deux lettres du nom), utilisé uniquement pour retrouver votre progression, ainsi que vos réponses aux exercices.</div>
+        <div style="padding:12px 16px;background:#F1F4FF;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;">Votre progression sur les 3 niveaux (Junior, Confirmé, Expert) est sauvegardée localement sur l'appareil utilisé, ce qui vous permet de reprendre où vous en étiez ou de changer de niveau à tout moment sans perdre vos données.</div>
+        <div style="padding:12px 16px;background:#F1F4FF;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;">Le PDF généré est créé localement dans votre navigateur, disponible à tout moment via le bouton flottant ; il n'est envoyé à personne automatiquement. C'est à vous de le transmettre à votre professeur.</div>
+      </div>
+      <button class="btn btn-outline" style="margin-top:20px;" onclick="showPage('page-home')">← Retour</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL SELECT -->
+<div id="page-levels" class="page">
+  <div class="wrap">
+    <h2 style="margin-bottom:6px;">Choose your level</h2>
+    <p style="color:var(--muted);font-size:0.92rem;margin-bottom:10px;">Northline Solutions is growing fast — pick the role that matches your challenge. You can switch levels at any time; your progress on each is saved separately.</p>
+    <div class="level-grid" id="level-grid"></div>
+  </div>
+</div>
+
+<!-- LEVEL PLAY -->
+<div id="page-play" class="page">
+  <div class="wrap" id="play-wrap"></div>
+</div>
+
+<!-- TEACHER DASHBOARD -->
+<div id="page-teacher" class="page">
+  <div class="wrap">
+    <h2 style="margin-bottom:4px;">Teacher Dashboard</h2>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:24px;">Northline Solutions — BTS NDRC</p>
+
+    <div class="card" style="margin-bottom:18px;">
+      <h3 style="font-size:0.95rem;margin-bottom:12px;">Student access code</h3>
+      <span class="teacher-code" id="teacher-student-code">NORTHLINE1</span>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <h3 style="font-size:0.95rem;margin-bottom:12px;">Scoring</h3>
+      <p style="font-size:0.86rem;color:var(--muted);line-height:1.6;">Each level is self-contained (score does not carry over between levels). Automated exercises (vocabulary, comprehension) score +1 per correct answer, 0 otherwise. Oral exercises (6 and 7) are scored by the teacher out of 10. A level is validated when the student reaches at least <strong>70%</strong> of the total possible points for that level.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <h3 style="font-size:0.95rem;margin-bottom:14px;">Oral scenarios &amp; teacher recaps</h3>
+      <div id="teacher-oral-content"></div>
+    </div>
+
+    <button class="btn btn-outline" onclick="showPage('page-home')">← Back</button>
+  </div>
+</div>
+
+<!-- ORAL INFO MODAL (ex6) -->
+<button id="info-float-btn" class="info-float-btn" onclick="openInfoModal()">📋 Company &amp; Product Sheet</button>
+<div class="info-modal" id="info-modal">
+  <div class="info-modal-box">
+    <div class="info-modal-title">Reference sheet</div>
+    <div id="info-modal-content"></div>
+    <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="closeInfoModal()">Close</button>
+  </div>
+</div>
+
+<footer>Créé par C. Iemfre</footer>
+
+<script>
+/* ============ UTILITIES ============ */
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function esc(s){return (s||'').toString();}
+function pct(score,total){return total>0?Math.round((score/total)*1000)/10:0;}
+
+/* ============ VOCAB DATA (en/fr pairs, en/def pairs) ============ */
+const V = {
+junior:{
+ lot1:[["customer","client"],["prospect","prospect"],["sales pitch","argumentaire de vente"],["appointment","rendez-vous"],["quote","devis"],["invoice","facture"],["order","commande"],["deadline","date limite"],["follow-up","relance"],["contract","contrat"],["target","objectif commercial"],["discount","remise"],["delivery","livraison"],["supplier","fournisseur"],["negotiation","négociation"]],
+ lot2:[["feedback","retour client"],["customer service","service client"],["sales team","équipe commerciale"],["to close a deal","conclure une vente"],["to book a meeting","prendre rendez-vous"],["payment","paiement"],["warranty","garantie"],["shipment","expédition"],["complaint","réclamation"],["refund","remboursement"],["brochure","brochure"],["sample","échantillon"],["customer loyalty","fidélité client"],["lead","prospect potentiel"],["pricing","tarification"]],
+ lot3:[["after-sales service","service après-vente"],["bulk order","commande en gros"],["sales rep","représentant commercial"],["commission","commission"],["turnover","chiffre d'affaires"],["client portfolio","portefeuille clients"],["invoice","facture"],["price list","liste de prix"],["packaging","emballage"],["stock","stock"],["retailer","détaillant"],["wholesaler","grossiste"],["terms and conditions","conditions générales"],["signature","signature"],["handshake","poignée de main"]],
+ lot4:[["market share","the percentage of total sales in a market held by one company"],["competitor","a company offering similar products or services"],["brand awareness","how familiar customers are with a brand"],["customer satisfaction","how happy customers are with a product or service"],["sales figures","numbers showing how much has been sold"],["to place an order","to formally ask for goods or services"],["to negotiate a price","to discuss and agree on a price"],["to sign a contract","to formally agree to a contract in writing"],["trade fair","an event where companies display and sell products"],["cash flow","the money moving in and out of a business"],["loyalty programme","a scheme that rewards regular customers"],["to meet a target","to achieve a set goal"],["sales revenue","the total income from selling goods or services"],["a claim","a formal request, often for compensation"],["a reminder","a message sent to make someone remember something"]]
+},
+confirme:{
+ lot1:[["account manager","gestionnaire de compte"],["to escalate an issue","remonter un problème"],["dissatisfaction","mécontentement"],["to renegotiate","renégocier"],["terms of service","conditions de service"],["breach of contract","rupture de contrat"],["penalty clause","clause pénale"],["loyalty discount","remise de fidélité"],["retention rate","taux de fidélisation"],["churn","attrition"],["to reassure","rassurer"],["service level agreement (SLA)","accord de niveau de service"],["compensation","dédommagement"],["goodwill gesture","geste commercial"],["to restore confidence","restaurer la confiance"],["underperformance","sous-performance"],["root cause","cause profonde"],["corrective action","action corrective"],["stakeholder","partie prenante"],["to salvage a relationship","sauver une relation"]],
+ lot2:[["to address a complaint","traiter une réclamation"],["misunderstanding","malentendu"],["to escalate to management","remonter à la direction"],["outstanding balance","solde impayé"],["overdue payment","paiement en retard"],["to reinstate a contract","rétablir un contrat"],["trust","confiance"],["long-term partnership","partenariat de long terme"],["to reassess a proposal","réévaluer une proposition"],["competitive offer","offre concurrentielle"],["to poach a client","débaucher un client"],["exclusivity clause","clause d'exclusivité"],["renewal","renouvellement"],["to downgrade a service","déclasser un service"],["to upgrade a plan","passer à une offre supérieure"],["key account","compte stratégique"],["churn rate","taux d'attrition"],["customer retention","fidélisation client"],["to draft an amendment","rédiger un avenant"],["liability","responsabilité juridique"]],
+ lot3:[["to mitigate a risk","atténuer un risque"],["to formalise an agreement","formaliser un accord"],["to reach a compromise","trouver un compromis"],["to reiterate a point","réitérer un point"],["counteroffer","contre-offre"],["to concede a point","concéder un point"],["leverage","levier de négociation"],["to sweeten a deal","améliorer une offre"],["to be at fault","être fautif"],["to acknowledge a mistake","reconnaître une erreur"],["to make amends","réparer une erreur"],["to follow up formally","relancer officiellement"],["non-disclosure agreement (NDA)","accord de confidentialité"],["to flag a concern","signaler un problème"],["to reassign an account","réattribuer un compte"],["handover notes","notes de passation"],["to de-escalate","désamorcer une situation"],["to build rapport","établir une relation de confiance"],["to smooth things over","arranger les choses"],["benchmark","référence"]],
+ lot4:[["to win back a client","to persuade a client to return after they left"],["service disruption","a temporary stop or problem in a service"],["reputational damage","harm caused to a company's image"],["to conduct a review","to examine something formally"],["corrective measure","an action taken to fix a problem"],["to renegotiate terms","to discuss and change agreed conditions"],["account review","a formal check of a client's account and history"],["to formalise in writing","to put an agreement into an official written form"],["risk assessment","the process of identifying possible problems"],["to hold a debrief","to have a meeting after an event to discuss it"],["exit clause","a contract term allowing early termination"],["to safeguard the relationship","to protect a business relationship"],["to reassure stakeholders","to calm the concerns of interested parties"],["to draft a proposal","to write an initial version of an offer"],["trust-building measure","an action taken to increase confidence"],["to escalate diplomatically","to raise an issue tactfully to a higher level"],["to close the loop","to complete a process by following up"],["account health","the overall status of a client relationship"],["service credit","a discount given to compensate for poor service"],["to prevent churn","to stop customers from leaving"]]
+},
+expert:{
+ lot1:[["to be on the brink of termination","être sur le point d'être résilié"],["material breach","violation substantielle"],["to invoke a clause","invoquer une clause"],["indemnity","indemnisation"],["to mitigate reputational fallout","limiter les retombées sur la réputation"],["executive sponsor","sponsor exécutif"],["to escalate to board level","remonter au conseil d'administration"],["crisis management","gestion de crise"],["to safeguard the account","protéger le compte client"],["legal recourse","recours juridique"],["to reassess the partnership","réévaluer le partenariat"],["at stake","en jeu"],["to jeopardise","mettre en péril"],["irreparable damage","dommage irréparable"],["to salvage the relationship","sauver la relation"],["high-stakes negotiation","négociation à enjeux élevés"],["to concede ground","céder du terrain"],["non-negotiable","non négociable"],["ultimatum","ultimatum"],["to hold firm","tenir bon"],["leverage point","levier de négociation"],["to de-risk the situation","réduire le risque"],["to reaffirm commitment","réaffirmer son engagement"],["win-back strategy","stratégie de reconquête"],["bottom line","résultat net"]],
+ lot2:[["to terminate with immediate effect","résilier avec effet immédiat"],["force majeure","force majeure"],["to breach confidentiality","violer la confidentialité"],["to pursue litigation","engager une action en justice"],["to seek damages","demander des dommages et intérêts"],["goodwill gesture","geste commercial"],["to rebuild trust from scratch","reconstruire la confiance"],["zero-tolerance policy","politique de tolérance zéro"],["to be held liable","être tenu responsable"],["due diligence","vérification préalable"],["to overhaul a process","refondre un processus"],["systemic failure","défaillance systémique"],["to restore credibility","restaurer la crédibilité"],["reputational risk","risque réputationnel"],["to disclose fully","divulguer entièrement"],["transparency clause","clause de transparence"],["to withhold payment","retenir un paiement"],["contractual obligation","obligation contractuelle"],["to default on an agreement","manquer à un accord"],["exit strategy","stratégie de sortie"],["to reconsider the terms","reconsidérer les termes"],["last resort","dernier recours"],["to draw a line","fixer une limite"],["non-compliance","non-conformité"],["aggravating factor","facteur aggravant"]],
+ lot3:[["to hedge one's position","couvrir sa position"],["to table a proposal","soumettre une proposition"],["deadlock","impasse"],["to break a deadlock","sortir de l'impasse"],["to make a final offer","faire une dernière offre"],["to walk away from the table","quitter la table des négociations"],["to call someone's bluff","appeler le bluff de quelqu'un"],["to hold all the cards","avoir tous les atouts en main"],["to be under scrutiny","être sous surveillance"],["to come under fire","être critiqué"],["to take accountability","assumer la responsabilité"],["to shoulder the blame","endosser la faute"],["to set a precedent","créer un précédent"],["to close ranks","faire front commun"],["to go over someone's head","court-circuiter quelqu'un"],["to read between the lines","lire entre les lignes"],["to have the upper hand","avoir l'avantage"],["to play hardball","être intransigeant"],["to soften one's stance","assouplir sa position"],["to save face","sauver la face"],["to burn bridges","couper les ponts"],["to give an ultimatum","donner un ultimatum"],["to buy time","gagner du temps"],["to cut one's losses","réduire ses pertes"],["to turn the tide","renverser la situation"]],
+ lot4:[["strategic account","a client considered highly important to the business"],["churn prevention","actions taken to stop customers from leaving"],["brand equity","the value a brand adds beyond its basic product"],["crisis communication","how a company communicates during a difficult situation"],["stakeholder management","the process of managing relationships with interested parties"],["post-mortem analysis","a review conducted after an event to understand what happened"],["service credit","a discount given to compensate for poor service"],["contractual penalty","a financial punishment defined in a contract"],["reputational exposure","the risk of damage to a company's image"],["executive briefing","a short formal update given to senior leaders"],["damage control","actions taken to limit the negative effects of a problem"],["escalation protocol","the official procedure for raising a serious issue"],["account rescue plan","a strategy designed to save a troubled client relationship"],["client advocacy","actively supporting and defending a client's interests"],["relationship capital","the trust and goodwill built up over time with someone"],["trust deficit","a lack of confidence between two parties"],["to reset expectations","to establish new, more realistic expectations"],["long-term viability","the ability to continue successfully over time"],["to renegotiate from a position of weakness","to discuss new terms when you have little leverage"],["to leverage a relationship","to use an existing relationship to gain an advantage"],["to formalise a settlement","to put an agreed resolution into an official form"],["to draw up a remediation plan","to prepare a formal plan to fix a problem"],["to present a united front","to show unity despite internal disagreement"],["board-level intervention","direct involvement from senior company leadership"],["to future-proof a partnership","to make a relationship resilient to future problems"]]
+}
+};
+
+/* ============ EXERCISE 5/6/7 CONTENT PER LEVEL ============ */
+const CONTENT = {
+junior:{
+  roleTitle:"Junior — Sales Trainee",
+  pillClass:"pill-junior", cardClass:"junior",
+  intro:"Welcome to Northline Solutions! Before you can manage your own client accounts, you must complete your induction period and prove you know the basics of the job.",
+  emailMeta:"From: Laura Bennett &lt;l.bennett@bennettco.co.uk&gt; — Bennett &amp; Co. Ltd. | Subject: Issue with order NL-2291 — urgent",
+  emailBody:`<p>Dear Sales Team,</p>
+  <p>I am writing to follow up on my recent order (reference NL-2291), placed on 3 March through your website. I still have not received a shipping confirmation, even though your standard delivery time is five working days.</p>
+  <p>In addition, when I checked my invoice yesterday, I noticed that the total amount charged does not match the price displayed on your website at the time of purchase. There is a difference of £45, which I would like explained before I make any further orders.</p>
+  <p>I have also tried calling your customer service line twice this week, but no one was able to give me a clear answer. This is starting to affect my confidence in your company, as I have been a loyal customer for over two years.</p>
+  <p>Could someone please check the status of my order and clarify the pricing issue as soon as possible? I would appreciate a response within 48 hours.</p>
+  <p>I look forward to hearing from you.</p>
+  <p>Best regards,<br>Laura Bennett<br>Bennett &amp; Co. Ltd.</p>`,
+  comprehension:[
+    {type:'qcm',q:"Why is Laura concerned about her order?",opts:["She received the wrong item","She hasn't received any shipping confirmation despite the standard delivery time","She wants to cancel it","She never placed the order"],ans:1},
+    {type:'qcm',q:"What discrepancy does she find on her invoice?",opts:["A different delivery address","An extra item she didn't order","A price that doesn't match the website","A missing signature"],ans:2},
+    {type:'qcm',q:"How did the customer service team respond when she called?",opts:["They resolved everything immediately","They gave her a full refund","They were unable to give her a clear answer","They refused to speak with her"],ans:2},
+    {type:'qcm',q:"Why does Laura mention she has been a customer for over two years?",opts:["To ask for a new discount code","To explain why this situation is affecting her trust in the company","To request a free product","To complain about a different issue"],ans:1},
+    {type:'qcm',q:"What does Laura expect from the company?",opts:["An apology only","A response within 48 hours addressing both issues","A new order for free","To close her account"],ans:1},
+    {type:'qcm',q:"What overall impression does this email give of Laura as a customer?",opts:["She is indifferent","She is a loyal customer who is starting to lose confidence","She is a first-time customer","She wants to end the relationship immediately"],ans:1},
+    {type:'tf',q:"Laura has already received a shipping confirmation for her order.",ans:false},
+    {type:'tf',q:"The price on Laura's invoice matches the price she saw on the website.",ans:false},
+    {type:'tf',q:"Laura contacted customer service more than once.",ans:true},
+    {type:'tf',q:"Laura is completely satisfied with how her situation has been handled so far.",ans:false}
+  ],
+  oral6:{
+    situation:"A prospect contacts you for the first time. They want to know more about Northline Solutions but don't know your company yet. Present your company and one of your products/services in 2-3 minutes, without notes.",
+    company:{name:"Northline Solutions",sector:"B2B consulting",founded:"2015",location:"London, clients across Europe",staff:"around 80 employees"},
+    product:{name:"NorthLine CRM Pro",fn:"Customer relationship management (CRM) software",tech:"Cloud hosting, real-time sync, mobile/desktop compatible, customisable dashboard",target:"SMEs with 10 to 200 employees",price:"from £49/month per user"},
+    args:["Operational in under 48 hours, no technical skills required","Customer support available 7/7 by chat and phone, no extra cost","No-commitment contract, cancellable at any time, no hidden fees","Secure, certified hosting with daily automatic backups","Fully customisable dashboards and reports","Compatible with tools already used by the client (email, accounting, social media)","+20% average improvement in sales follow-up within the first month","A dedicated advisor assigned for the first 3 months","Plan that scales as the client's business grows","Already adopted by more than 500 SMEs in Europe"]
+  },
+  oral7:{
+    memoMeta:"INTERNAL MEMO — Northline Solutions | To: All Sales Team Members | From: Marketing Department | Subject: Launch of NorthLine CRM Pro",
+    memoBody:`<p>Dear team,</p>
+    <p>We are pleased to announce the official launch of our new product, NorthLine CRM Pro, scheduled for the 1st of next month. This cloud-based customer relationship management tool has been designed specifically for small and medium-sized businesses looking to improve customer tracking and communication.</p>
+    <p>The product will be available in three pricing plans: Basic, Standard, and Premium, starting at £49 per user per month. Unlike our previous CRM tool, this version can be installed and fully operational within 48 hours, with no technical training required from the client's side.</p>
+    <p>All sales representatives are expected to complete the online product training module before the end of this week. A dedicated product sheet and pricing guide will be sent to your email shortly.</p>
+    <p>Please note that during the first month following the launch, all new customers who sign up will benefit from a 15% discount as part of our introductory offer. We strongly encourage you to mention this to any prospect during your calls.</p>
+    <p>If you have any questions regarding the product or the training schedule, please contact the marketing department directly.</p>
+    <p>Thank you for your continued commitment to Northline Solutions' growth.</p>
+    <p>Best regards,<br>The Marketing Team</p>`,
+    teacherRecap:["Product name: NorthLine CRM Pro","Launch date: 1st of next month","Three pricing plans: Basic, Standard, Premium — from £49/user/month","Fully operational within 48 hours, no technical training needed","All sales reps must complete the training module by the end of the week","A product sheet and pricing guide will follow by email","Launch offer: 15% discount for new customers during the first month","Reps are encouraged to mention the offer during calls"]
+  }
+},
+confirme:{
+  roleTitle:"Confirmé — Sales Executive",
+  pillClass:"pill-confirme", cardClass:"confirme",
+  intro:"A strategic client has just raised serious concerns about their ongoing contract. Management has handed you this file — it's yours to take back in hand.",
+  emailMeta:"From: Richard Whitmore &lt;r.whitmore@whitmoreretail.co.uk&gt; — Managing Director, Whitmore Retail Group | Subject: Serious concerns regarding our partnership — response required",
+  emailBody:`<p>Dear Mr. Harding,</p>
+  <p>I am writing on behalf of Whitmore Retail Group to express our growing concern regarding the service we have received from Northline Solutions over the past quarter.</p>
+  <p>As you are aware, our contract includes a service level agreement guaranteeing a response time of 24 hours for any technical issue. On three separate occasions this month, our queries were left unanswered for over 72 hours, which has directly affected our internal operations and, on one occasion, caused a delay in reporting to our own shareholders.</p>
+  <p>Furthermore, the last invoice we received did not reflect the 10% loyalty discount agreed upon during our contract renewal in January. When our finance team raised this with your billing department, they were told the discount "no longer applied," without further explanation.</p>
+  <p>I want to be transparent: our board is currently reviewing all supplier contracts, and Northline Solutions' renewal, due in six weeks, is far from guaranteed at this stage. Given the length and value of our partnership, I would have expected a higher standard of service and communication.</p>
+  <p>I would like to schedule a call this week to discuss corrective measures, and I expect a clear explanation regarding both the response time failures and the billing discrepancy.</p>
+  <p>I trust this matter will be handled with the seriousness it deserves.</p>
+  <p>Regards,<br>Richard Whitmore<br>Managing Director, Whitmore Retail Group</p>`,
+  comprehension:[
+    {type:'qcm',q:"On what does Richard Whitmore base his particular expectations of Northline Solutions?",opts:["A recent promotional offer","The length and value of their partnership","A promise made by a sales rep","A legal requirement"],ans:1},
+    {type:'qcm',q:"What is the main complaint against Northline Solutions?",opts:["Poor product quality","Response times far exceeding the guaranteed SLA","A cancelled meeting","An unclear contract"],ans:1},
+    {type:'qcm',q:"What response time does the SLA guarantee?",opts:["12 hours","24 hours","48 hours","72 hours"],ans:1},
+    {type:'qcm',q:"How many times was this deadline missed this month?",opts:["Once","Twice","Three times","Four times"],ans:2},
+    {type:'qcm',q:"What error was found on the latest invoice?",opts:["A duplicate charge","A missing signature","The agreed loyalty discount was not applied","The wrong delivery address"],ans:2},
+    {type:'qcm',q:"What is currently uncertain about the contract?",opts:["Its price","Its renewal in six weeks","Its start date","Its legal validity"],ans:1},
+    {type:'qcm',q:"What does Richard Whitmore explicitly request?",opts:["An immediate refund","A call this week with explanations and corrective measures","The dismissal of an employee","A new supplier"],ans:1},
+    {type:'tf',q:"The real response time reached up to 72 hours.",ans:true},
+    {type:'tf',q:"The delays directly affected the client's internal operations, including shareholder reporting.",ans:true},
+    {type:'tf',q:"The billing department explained that the discount had been removed due to a change in commercial policy.",ans:false},
+    {type:'tf',q:"The contract renewal is currently guaranteed regardless of the outcome of this exchange.",ans:false},
+    {type:'tf',q:"According to the email, the main short-term stake for Northline Solutions is the risk of losing a strategic client.",ans:true}
+  ],
+  oral6:{
+    situation:"You receive a call from Richard Whitmore (Whitmore Retail Group), a strategic client, following his email. He is irritated, threatens not to renew the contract, and expects concrete explanations and a compensation proposal. Handle the call, without notes.",
+    client:{name:"Whitmore Retail Group",history:"Partner for 4 years",contract:"Renewal due in 6 weeks",issues:"3 SLA breaches (72h instead of 24h), billing error (10% loyalty discount not applied)",room:"Commercial gesture up to 15% discount on next quarter, dedicated contact for 2 months, written incident report within 48h"}
+  },
+  oral7:{
+    memoMeta:"INTERNAL REPORT — Account Risk Review | To: Senior Management | From: Customer Success Department | Subject: Whitmore Retail Group — Risk of Non-Renewal",
+    memoBody:`<p>This report summarises the current situation regarding our account with Whitmore Retail Group, one of our top ten clients by annual revenue.</p>
+    <p>Over the past quarter, our support team failed to meet the contractual 24-hour response time on three occasions, with actual response times reaching up to 72 hours. Internal logs show that this was primarily due to short-staffing in the technical support team during a period of high demand, combined with a lack of escalation from junior agents who were unsure how to prioritise the tickets.</p>
+    <p>In addition, a billing error occurred when the loyalty discount agreed during the January renewal was not correctly applied in our system, resulting in an overcharge on the client's most recent invoice. This was identified as a manual entry error by the billing department, not a policy change.</p>
+    <p>The client's Managing Director has expressed serious dissatisfaction and has indicated that the contract renewal, due in six weeks, is currently at risk. He has requested a call this week to discuss corrective measures and expects both an explanation and a gesture of goodwill.</p>
+    <p>We recommend offering a temporary discount, assigning a dedicated point of contact for the next two months, and providing a written incident report within 48 hours. We also recommend reviewing our escalation procedures to prevent similar delays in the future.</p>
+    <p>Given the account's value and history, we consider this a high-priority matter requiring immediate action.</p>`,
+    teacherRecap:["Sender/recipient: Customer Success Department → Senior Management, subject: risk of non-renewal","Client profile: Whitmore Retail Group, top-10 client by annual revenue","Problem 1 — SLA breach: 3 breaches this quarter, response up to 72h instead of 24h; cause: understaffing + junior agents failing to escalate priority tickets","Problem 2 — Billing error: January loyalty discount not applied, client overcharged; cause: manual entry error, not a policy change","Client reaction: Managing Director seriously dissatisfied, renewal (in 6 weeks) at risk, requests a call this week, expects explanation + goodwill gesture","Recommendations: temporary discount, dedicated contact for 2 months, written incident report within 48h, review escalation procedures","Conclusion: high-priority account, immediate action required"]
+  }
+},
+expert:{
+  roleTitle:"Expert — Senior Account Manager",
+  pillClass:"pill-expert", cardClass:"expert",
+  intro:"The company's biggest account is at risk: the client is threatening to terminate the contract following a major incident. You are the last point of contact before this reaches senior management.",
+  emailMeta:"From: Margaret Ashcroft &lt;chair@ashcroftindustries.co.uk&gt; — Chair of the Board, Ashcroft Industries | Subject: Formal notice — Breach of contract and potential termination",
+  emailBody:`<p>Dear Ms. Caldwell,</p>
+  <p>I am writing on behalf of the Board of Directors of Ashcroft Industries to formally notify Northline Solutions of a material breach of our service contract (Ref. NL-CTR-2021-047), following the data incident disclosed to us on 14 September.</p>
+  <p>As you are aware, Ashcroft Industries has been a client of Northline Solutions for eight years, representing over £1.2 million in annual revenue. This relationship has been built on trust and confidentiality — both of which have now been seriously compromised.</p>
+  <p>According to your own incident report, a configuration error on your servers exposed confidential pricing data belonging to Ashcroft Industries to a third-party competitor for a period of eleven days before it was detected. This is a direct breach of Clause 14 of our contract, which guarantees strict data confidentiality at all times.</p>
+  <p>The consequences for our business have already been significant: we have identified at least two tenders where a competitor appeared to have prior knowledge of our pricing structure, resulting in an estimated loss of £340,000 in potential contracts.</p>
+  <p>Our legal department has advised that we are entitled to pursue damages under the terms of our agreement, and we are currently assessing whether to invoke the termination clause with immediate effect. Before proceeding further, however, the Board has requested a formal meeting with senior leadership at Northline Solutions to understand exactly what happened, what safeguards will be implemented going forward, and what compensation is being proposed.</p>
+  <p>This meeting must take place within five working days. We consider this matter extremely serious and are not currently prepared to continue this partnership without significant guarantees and a credible remediation plan.</p>
+  <p>We await your immediate response.</p>
+  <p>Yours sincerely,<br>Margaret Ashcroft<br>Chair of the Board, Ashcroft Industries</p>`,
+  comprehension:[
+    {type:'qcm',q:"How long has Ashcroft Industries been a client of Northline Solutions?",opts:["2 years","5 years","8 years","12 years"],ans:2},
+    {type:'qcm',q:"What kind of incident triggered this letter?",opts:["A late delivery","A data exposure incident","A billing dispute","A staff resignation"],ans:1},
+    {type:'qcm',q:"Which contractual clause was breached?",opts:["The payment clause","The confidentiality clause (Clause 14)","The renewal clause","The exclusivity clause"],ans:1},
+    {type:'qcm',q:"For how long was the data exposed?",opts:["2 days","5 days","11 days","30 days"],ans:2},
+    {type:'qcm',q:"What is Ashcroft Industries' legal department currently assessing?",opts:["Whether to hire a new supplier","Whether to pursue damages and possibly terminate the contract","Whether to sue a competitor directly","Whether to change their pricing strategy"],ans:1},
+    {type:'qcm',q:"What does the Board want to understand during the requested meeting?",opts:["Only the financial compensation offered","What happened, what safeguards will follow, and what compensation is proposed","The history of the company","The identity of the technician responsible"],ans:1},
+    {type:'qcm',q:"According to the letter, what is the main short-term stake for Northline Solutions?",opts:["A minor administrative issue","The possible loss of a major client and legal action","A temporary drop in sales","A change in market conditions"],ans:1},
+    {type:'tf',q:"A competitor gained access to Ashcroft Industries' pricing data.",ans:true},
+    {type:'tf',q:"No concrete financial loss has been identified yet by Ashcroft Industries.",ans:false},
+    {type:'tf',q:"The requested meeting must take place within 15 working days.",ans:false},
+    {type:'tf',q:"Ashcroft Industries is ready to continue the partnership without any conditions.",ans:false},
+    {type:'tf',q:"This letter constitutes a formal notice ahead of a possible contract termination.",ans:true}
+  ],
+  oral6:{
+    situation:"You are in a video call with Margaret Ashcroft (Chair of the Board, Ashcroft Industries) and her legal team. You must explain the incident, propose a credible remediation plan, and negotiate to avoid contract termination, without notes.",
+    client:{name:"Ashcroft Industries",history:"Partner for 8 years, £1.2M annual revenue",contract:"Termination clause may be invoked",issues:"Server configuration error exposed confidential pricing data for 11 days",impact:"Estimated loss of £340,000 on 2 tenders",room:"Financial compensation (up to 15% discount over 12 months), independent external security audit, written commitment on a new security protocol, symbolic gesture (e.g. current quarter billing waived)"}
+  },
+  oral7:{
+    memoMeta:"CONFIDENTIAL — INTERNAL INCIDENT REPORT | To: Executive Committee | From: IT Security &amp; Customer Success Departments | Subject: Data Exposure Incident — Ashcroft Industries Account",
+    memoBody:`<p>This report details a serious data security incident affecting Ashcroft Industries, one of Northline Solutions' longest-standing and highest-value clients.</p>
+    <p>On 3 September, a member of our infrastructure team made a configuration change to our cloud server settings intended to improve system performance. Due to an oversight during this update, access permissions on a shared data folder were incorrectly reset, inadvertently exposing confidential pricing documents belonging to Ashcroft Industries to external users with certain system credentials.</p>
+    <p>The exposure remained undetected for eleven days, until it was flagged during a routine internal audit on 14 September. Our investigation confirmed that at least one external party — believed to be a competitor of Ashcroft Industries — accessed the exposed folder during this period.</p>
+    <p>Ashcroft Industries has since identified two ongoing tenders in which a competitor appeared to have unusual insight into their pricing strategy, and estimates a potential loss of £340,000 in lost business as a direct result.</p>
+    <p>The client's legal department has formally notified us of a material breach under Clause 14 of our service contract, which guarantees data confidentiality. They are currently considering both financial damages and immediate contract termination. A formal meeting with their Board has been requested within five working days.</p>
+    <p>Internally, we have already isolated the affected server, restored correct access permissions, and begun a full audit of all client data folders to rule out similar exposures elsewhere. However, no compensation or remediation plan has yet been formally proposed to the client.</p>
+    <p>Given the financial value and reputational significance of this account, immediate executive-level involvement is strongly recommended, along with a rapid, credible response to prevent termination and potential legal action.</p>`,
+    teacherRecap:["Client concerned: Ashcroft Industries (8 years, £1.2M/year)","Cause: server configuration error during an update (3 September)","Technical consequence: pricing data folder exposed publicly for 11 days","Detection: during a routine internal audit (14 September), not immediate","Evidence of exploitation: a competitor likely accessed the data","Financial impact estimated by client: £340,000 potential loss on 2 tenders","Client position: invokes breach of Clause 14 (confidentiality), considers termination + legal action, demands a meeting within 5 days","Actions already taken internally: server isolated, permissions corrected, full audit in progress","Still missing: no compensation/remediation plan formally proposed yet","Report recommendation: immediate executive involvement, fast and credible response to prevent termination"]
+  }
+}
+};
+
+/* generic exercise question counts per level for vocab lots equal list length */
+function totalForLevel(levelKey){
+  const v=V[levelKey], c=CONTENT[levelKey];
+  const vocabTotal = v.lot1.length+v.lot2.length+v.lot3.length+v.lot4.length;
+  return vocabTotal + c.comprehension.length + 10 + 10; // +10 max each oral
+}
+
+/* ============ STATE / PERSISTENCE ============ */
+const STUDENT_ACCESS_CODE = "NORTHLINE1";
+let STATE = null;
+
+function emptyLevelState(){
+  return { ex:{lot1:null,lot2:null,lot3:null,lot4:null,comp:null,oral6:null,oral7:null} };
+}
+function emptyState(id){
+  return { id, levels:{ junior:emptyLevelState(), confirme:emptyLevelState(), expert:emptyLevelState() } };
+}
+function saveKey(id){ return 'northline_' + id.trim().toUpperCase().replace(/[^A-Z0-9]/g,'_'); }
+function saveState(){ if(STATE) localStorage.setItem(saveKey(STATE.id), JSON.stringify(STATE)); }
+function loadState(id){
+  const raw = localStorage.getItem(saveKey(id));
+  if(!raw) return null;
+  try{ return JSON.parse(raw); }catch(e){ return null; }
+}
+
+/* ============ NAVIGATION ============ */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){ showPage('page-home'); document.getElementById('hud').classList.remove('visible'); document.getElementById('pdf-float').classList.remove('visible'); hideInfoFloat(); }
+
+function studentLogin(){
+  const id = document.getElementById('student-id-input').value.trim().toUpperCase();
+  const code = document.getElementById('student-code-input').value.trim().toUpperCase();
+  if(!/^[A-Z]{2}-[A-Z]{2}$/.test(id)){ showAlert('student-error','Please enter a valid ID (format XX-YY).'); return; }
+  if(code !== STUDENT_ACCESS_CODE){ showAlert('student-error','Invalid access code.'); return; }
+  const existing = loadState(id);
+  STATE = existing || emptyState(id);
+  saveState();
+  document.getElementById('hud-id').textContent = id;
+  document.getElementById('hud').classList.add('visible');
+  document.getElementById('pdf-float').classList.add('visible');
+  renderLevelGrid();
+  showPage('page-levels');
+}
+function showAlert(elId,msg){ const el=document.getElementById(elId); el.textContent=msg; el.classList.add('show'); }
+
+function teacherLogin(){
+  const code = document.getElementById('teacher-code-input').value;
+  if(code === '0504'){ renderTeacherDashboard(); showPage('page-teacher'); }
+  else showAlert('teacher-error','Invalid code.');
+}
+
+/* ============ LEVEL GRID ============ */
+const LEVEL_ORDER = ['junior','confirme','expert'];
+function levelProgressLabel(levelKey){
+  const st = STATE.levels[levelKey];
+  const total = totalForLevel(levelKey);
+  let score = 0, doneCount=0;
+  Object.values(st.ex).forEach(e=>{ if(e){ score += e.score; doneCount++; } });
+  return {score, total, doneCount, pct: pct(score,total)};
+}
+function renderLevelGrid(){
+  const grid = document.getElementById('level-grid');
+  grid.innerHTML = '';
+  LEVEL_ORDER.forEach(key=>{
+    const c = CONTENT[key];
+    const p = levelProgressLabel(key);
+    const div = document.createElement('div');
+    div.className = 'level-card ' + c.cardClass;
+    div.innerHTML = `<span class="pill ${c.pillClass}">${key}</span>
+      <div class="level-name">${c.roleTitle}</div>
+      <div class="level-desc">${c.intro}</div>
+      <div class="level-progress">${p.doneCount}/7 exercises done — ${p.score}/${p.total} pts (${p.pct}%)</div>
+      <button class="btn btn-primary btn-block" onclick="openLevel('${key}')">${p.doneCount>0?'Continue':'Start'} this level</button>`;
+    grid.appendChild(div);
+  });
+}
+
+/* ============ PLAY: RENDER LEVEL ============ */
+let CURRENT_LEVEL = null;
+function openLevel(levelKey){
+  CURRENT_LEVEL = levelKey;
+  document.getElementById('hud-level').textContent = '— ' + CONTENT[levelKey].roleTitle;
+  renderPlay();
+  showPage('page-play');
+}
+function renderPlay(){
+  const key = CURRENT_LEVEL;
+  const c = CONTENT[key];
+  const st = STATE.levels[key];
+  const total = totalForLevel(key);
+  let wrap = document.getElementById('play-wrap');
+  wrap.innerHTML = `
+    <button class="btn btn-outline" style="margin-bottom:16px;" onclick="renderLevelGrid();showPage('page-levels')">← Back to levels</button>
+    <span class="pill ${c.pillClass}">${key}</span>
+    <div class="scenario-box ${c.cardClass}">
+      <div class="scenario-eyebrow">Your role: ${c.roleTitle}</div>
+      <div class="scenario-text">${c.intro}</div>
+      <div class="threshold-note">🎯 You need at least <strong>70%</strong> of the total points (${total} pts) to validate this level.</div>
+    </div>
+    <div id="ex-list"></div>
+  `;
+  const list = document.getElementById('ex-list');
+  list.appendChild(buildVocabQCMCard(key,'lot1','Exercise 1','QCM · Vocabulary'));
+  list.appendChild(buildVocabTFCard(key,'lot2','Exercise 2','True / False · Vocabulary'));
+  list.appendChild(buildVocabMatchCard(key,'lot3','Exercise 3','Matching · English → French', V[key].lot3.map(([en,fr])=>({def:en,ans:fr}))));
+  list.appendChild(buildVocabMatchCard(key,'lot4','Exercise 4','Matching · English → Definitions', V[key].lot4.map(([en,def])=>({def:def,ans:en}))));
+  list.appendChild(buildComprehensionCard(key));
+  list.appendChild(buildOral6Card(key));
+  list.appendChild(buildOral7Card(key));
+  updateInfoFloat();
+}
+
+/* ---- helper: exercise header/status ---- */
+function exHeader(badge,title,done){
+  return `<div class="ex-head"><span class="ex-badge">${badge}</span><span class="ex-title">${title}</span><span class="ex-status ${done?'done':''}">${done?'✓ Done':''}</span></div>`;
+}
+
+/* ============ EXERCISE 1: QCM VOCAB ============ */
+function buildVocabQCMCard(levelKey,exKey,badge,title){
+  const div = document.createElement('div'); div.className='ex-card'; div.id='card-'+exKey;
+  const list = V[levelKey][exKey==='lot1'?'lot1':exKey];
+  const saved = STATE.levels[levelKey].ex[exKey];
+  div.innerHTML = exHeader(badge,title,!!saved);
+  if(saved){
+    div.innerHTML += consultOrRedo(levelKey,exKey,saved,list.length);
+    document.querySelector('#card-'+exKey+' .redo-btn')?.addEventListener('click',()=>{ resetExercise(levelKey,exKey); renderPlay(); });
+    return div;
+  }
+  // build questions
+  const qs = list.map(([en,fr])=>{
+    const distractors = shuffle(list.filter(p=>p[1]!==fr)).slice(0,3).map(p=>p[1]);
+    const opts = shuffle([fr,...distractors]);
+    return {en, correct:fr, opts, correctIdx: opts.indexOf(fr)};
+  });
+  const qHtml = qs.map((q,i)=>`<div class="q-block"><div class="q-text">${i+1}. What is the best translation of "<em>${esc(q.en)}</em>"?</div>
+    ${q.opts.map((o,j)=>`<label class="opt-label" id="opt-${exKey}-${i}-${j}"><input type="radio" name="q${exKey}${i}" value="${j}">${o}</label>`).join('')}
+    </div>`).join('');
+  div.innerHTML += `<div id="qs-${exKey}">${qHtml}</div><button class="btn btn-primary" onclick="submitVocabQCM('${levelKey}','${exKey}')">Submit</button><div class="result-box" id="result-${exKey}"></div>`;
+  div._qs = qs;
+  setTimeout(()=>{ div.dataset.ready='1'; div._questions = qs; window['__qs_'+exKey] = qs; },0);
+  return div;
+}
+function submitVocabQCM(levelKey,exKey){
+  const qs = window['__qs_'+exKey];
+  let score=0;
+  qs.forEach((q,i)=>{
+    const sel = document.querySelector(`input[name="q${exKey}${i}"]:checked`);
+    const val = sel?parseInt(sel.value):-1;
+    q.opts.forEach((_,j)=>{
+      const lbl = document.getElementById(`opt-${exKey}-${i}-${j}`);
+      lbl.style.pointerEvents='none';
+      if(j===q.correctIdx) lbl.classList.add('correct');
+      else if(j===val) lbl.classList.add('wrong');
+    });
+    if(val===q.correctIdx) score++;
+  });
+  finishExercise(levelKey,exKey,score,qs.length,'result-'+exKey);
+}
+
+/* ============ EXERCISE 2: TRUE/FALSE VOCAB ============ */
+function buildVocabTFCard(levelKey,exKey,badge,title){
+  const div = document.createElement('div'); div.className='ex-card'; div.id='card-'+exKey;
+  const list = V[levelKey].lot2;
+  const saved = STATE.levels[levelKey].ex[exKey];
+  div.innerHTML = exHeader(badge,title,!!saved);
+  if(saved){
+    div.innerHTML += consultOrRedo(levelKey,exKey,saved,list.length);
+    document.querySelector('#card-'+exKey+' .redo-btn')?.addEventListener('click',()=>{ resetExercise(levelKey,exKey); renderPlay(); });
+    return div;
+  }
+  const stmts = list.map(([en,fr],i)=>{
+    const isTrue = i%2===0;
+    const shownFr = isTrue?fr:list[(i+1)%list.length][1];
+    return {en, shownFr, isTrue};
+  });
+  const html = stmts.map((s,i)=>`<div class="tf-block q-block"><div class="q-text">${i+1}. "${esc(s.en)}" means "${esc(s.shownFr)}".</div>
+    <div class="tf-row"><button class="tf-btn" id="tf-${exKey}-${i}-T" onclick="selTF('${exKey}',${i},true)">TRUE</button>
+    <button class="tf-btn" id="tf-${exKey}-${i}-F" onclick="selTF('${exKey}',${i},false)">FALSE</button></div></div>`).join('');
+  div.innerHTML += `<div>${html}</div><button class="btn btn-primary" style="margin-top:6px;" onclick="submitVocabTF('${levelKey}','${exKey}')">Submit</button><div class="result-box" id="result-${exKey}"></div>`;
+  window['__tf_'+exKey] = stmts;
+  window['__tfsel_'+exKey] = {};
+  return div;
+}
+function selTF(exKey,i,val){
+  window['__tfsel_'+exKey][i]=val;
+  document.getElementById(`tf-${exKey}-${i}-T`).classList.toggle('sel', val===true);
+  document.getElementById(`tf-${exKey}-${i}-F`).classList.toggle('sel', val===false);
+}
+function submitVocabTF(levelKey,exKey){
+  const stmts = window['__tf_'+exKey];
+  const sels = window['__tfsel_'+exKey];
+  let score=0;
+  stmts.forEach((s,i)=>{
+    const val = sels[i];
+    const tBtn=document.getElementById(`tf-${exKey}-${i}-T`), fBtn=document.getElementById(`tf-${exKey}-${i}-F`);
+    tBtn.style.pointerEvents='none'; fBtn.style.pointerEvents='none';
+    const correctBtn = s.isTrue?tBtn:fBtn;
+    correctBtn.classList.add('correct');
+    if(val!==undefined && val!==s.isTrue){ (val?tBtn:fBtn).classList.add('wrong'); }
+    if(val===s.isTrue) score++;
+  });
+  finishExercise(levelKey,exKey,score,stmts.length,'result-'+exKey);
+}
+
+/* ============ EXERCISE 3/4: MATCHING ============ */
+function buildVocabMatchCard(levelKey,exKey,badge,title,pairs){
+  const div = document.createElement('div'); div.className='ex-card'; div.id='card-'+exKey;
+  const saved = STATE.levels[levelKey].ex[exKey];
+  div.innerHTML = exHeader(badge,title,!!saved);
+  if(saved){
+    div.innerHTML += consultOrRedo(levelKey,exKey,saved,pairs.length);
+    document.querySelector('#card-'+exKey+' .redo-btn')?.addEventListener('click',()=>{ resetExercise(levelKey,exKey); renderPlay(); });
+    return div;
+  }
+  const bankWords = shuffle(pairs.map(p=>p.ans));
+  let html = `<div class="bank" id="bank-${exKey}"><div class="bank-label">Word bank — click a word, then click a slot</div>`;
+  bankWords.forEach((w,i)=>{ html += `<div class="word" id="word-${exKey}-${i}" onclick="wordClick('${exKey}',${i})">${esc(w)}</div>`; });
+  html += `</div>`;
+  pairs.forEach((p,i)=>{
+    html += `<div class="match-row"><div class="match-def">${i+1}. ${esc(p.def)}</div><div class="match-slot" id="slot-${exKey}-${i}" onclick="slotClick('${exKey}',${i})">drop here</div></div>`;
+  });
+  div.innerHTML += html + `<button class="btn btn-primary" style="margin-top:10px;" onclick="submitMatch('${levelKey}','${exKey}')">Submit</button><div class="result-box" id="result-${exKey}"></div>`;
+  window['__match_'+exKey] = {pairs, bankWords, selected:null};
+  return div;
+}
+function wordClick(exKey,i){
+  const st = window['__match_'+exKey];
+  const el = document.getElementById(`word-${exKey}-${i}`);
+  if(!el || el.style.display==='none') return;
+  if(st.selected===i){ el.style.outline=''; st.selected=null; return; }
+  if(st.selected!==null){ const prev=document.getElementById(`word-${exKey}-${st.selected}`); if(prev) prev.style.outline=''; }
+  el.style.outline='2px solid var(--coral)';
+  st.selected=i;
+}
+function slotClick(exKey,i){
+  const st = window['__match_'+exKey];
+  const slot = document.getElementById(`slot-${exKey}-${i}`);
+  if(slot.dataset.filled) return;
+  if(st.selected===null) return;
+  const wordEl = document.getElementById(`word-${exKey}-${st.selected}`);
+  slot.textContent = wordEl.textContent;
+  slot.dataset.filled = wordEl.textContent;
+  slot.classList.add('filled');
+  wordEl.style.display='none';
+  wordEl.style.outline='';
+  st.selected=null;
+}
+function submitMatch(levelKey,exKey){
+  const st = window['__match_'+exKey];
+  let score=0;
+  st.pairs.forEach((p,i)=>{
+    const slot = document.getElementById(`slot-${exKey}-${i}`);
+    const filled = slot.dataset.filled||'';
+    if(filled.toLowerCase()===p.ans.toLowerCase()){ slot.classList.add('correct'); score++; }
+    else { slot.classList.add('wrong'); slot.textContent = (filled?filled+' → ':'')+p.ans; }
+  });
+  finishExercise(levelKey,exKey,score,st.pairs.length,'result-'+exKey);
+}
+
+/* ============ EXERCISE 5: COMPREHENSION (SPLIT SCREEN) ============ */
+function buildComprehensionCard(levelKey){
+  const c = CONTENT[levelKey];
+  const div = document.createElement('div'); div.className='ex-card'; div.id='card-comp';
+  const saved = STATE.levels[levelKey].ex.comp;
+  div.innerHTML = exHeader('Exercise 5','Reading Comprehension',!!saved);
+  if(saved){
+    div.innerHTML += consultOrRedo(levelKey,'comp',saved,c.comprehension.length);
+    document.querySelector('#card-comp .redo-btn')?.addEventListener('click',()=>{ resetExercise(levelKey,'comp'); renderPlay(); });
+    return div;
+  }
+  let qHtml='';
+  c.comprehension.forEach((q,i)=>{
+    if(q.type==='qcm'){
+      const opts = q.opts.map((o,j)=>`<label class="opt-label" id="opt-comp-${i}-${j}"><input type="radio" name="qcomp${i}" value="${j}">${o}</label>`).join('');
+      qHtml += `<div class="q-block"><div class="q-text">${i+1}. ${q.q}</div>${opts}</div>`;
+    } else {
+      qHtml += `<div class="q-block"><div class="q-text">${i+1}. ${q.q}</div>
+      <div class="tf-row"><button class="tf-btn" id="tf-comp-${i}-T" onclick="selTF('comp',${i},true)">TRUE</button>
+      <button class="tf-btn" id="tf-comp-${i}-F" onclick="selTF('comp',${i},false)">FALSE</button></div></div>`;
+    }
+  });
+  window['__tfsel_comp'] = {};
+  div.innerHTML += `<div class="split">
+    <div class="text-pane"><div class="email-meta">${c.emailMeta}</div>${c.emailBody}</div>
+    <div class="q-pane">${qHtml}<button class="btn btn-primary" style="margin-top:8px;" onclick="submitComprehension('${levelKey}')">Submit</button><div class="result-box" id="result-comp"></div></div>
+  </div>`;
+  return div;
+}
+function submitComprehension(levelKey){
+  const c = CONTENT[levelKey];
+  let score=0;
+  c.comprehension.forEach((q,i)=>{
+    if(q.type==='qcm'){
+      const sel = document.querySelector(`input[name="qcomp${i}"]:checked`);
+      const val = sel?parseInt(sel.value):-1;
+      q.opts.forEach((_,j)=>{
+        const lbl = document.getElementById(`opt-comp-${i}-${j}`);
+        lbl.style.pointerEvents='none';
+        if(j===q.ans) lbl.classList.add('correct'); else if(j===val) lbl.classList.add('wrong');
+      });
+      if(val===q.ans) score++;
+    } else {
+      const val = window['__tfsel_comp'][i];
+      const tBtn=document.getElementById(`tf-comp-${i}-T`), fBtn=document.getElementById(`tf-comp-${i}-F`);
+      tBtn.style.pointerEvents='none'; fBtn.style.pointerEvents='none';
+      (q.ans?tBtn:fBtn).classList.add('correct');
+      if(val!==undefined && val!==q.ans) (val?tBtn:fBtn).classList.add('wrong');
+      if(val===q.ans) score++;
+    }
+  });
+  finishExercise(levelKey,'comp',score,c.comprehension.length,'result-comp');
+}
+
+/* ============ EXERCISE 6: ORAL PITCH ============ */
+let CURRENT_INFO = null;
+function buildOral6Card(levelKey){
+  const c = CONTENT[levelKey];
+  const div = document.createElement('div'); div.className='ex-card'; div.id='card-oral6';
+  const saved = STATE.levels[levelKey].ex.oral6;
+  div.innerHTML = exHeader('Exercise 6','Oral · Sales Pitch / Client Call',!!saved);
+  if(saved){
+    div.innerHTML += `<div class="consult-box">Teacher score: <strong>${saved.score}/10</strong></div><button class="btn btn-outline redo-btn">Redo this exercise</button>`;
+    setTimeout(()=>{ document.querySelector('#card-oral6 .redo-btn')?.addEventListener('click',()=>{ resetExercise(levelKey,'oral6'); renderPlay(); }); },0);
+    return div;
+  }
+  div.innerHTML += `<div class="situation-box">${c.oral6.situation}</div>
+    <div class="score-row"><label>Teacher score (0-10):</label><input type="number" min="0" max="10" class="score-input" id="score-oral6"></div>
+    <button class="btn btn-primary" onclick="submitOral(6)">Validate score</button>
+    <div class="result-box" id="result-oral6"></div>`;
+  return div;
+}
+function buildOral7Card(levelKey){
+  const c = CONTENT[levelKey];
+  const div = document.createElement('div'); div.className='ex-card'; div.id='card-oral7';
+  const saved = STATE.levels[levelKey].ex.oral7;
+  div.innerHTML = exHeader('Exercise 7','Oral Synthesis (notes in French, presented in English)',!!saved);
+  if(saved){
+    div.innerHTML += `<div class="consult-box">Teacher score: <strong>${saved.score}/10</strong></div><button class="btn btn-outline redo-btn">Redo this exercise</button>`;
+    setTimeout(()=>{ document.querySelector('#card-oral7 .redo-btn')?.addEventListener('click',()=>{ resetExercise(levelKey,'oral7'); renderPlay(); }); },0);
+    return div;
+  }
+  div.innerHTML += `<div class="alert alert-warning show" style="margin-bottom:14px;">Read the memo below. Prepare a synthesis <strong>in French</strong>, as notes only (no full written text). You will then present this synthesis <strong>orally, in English</strong>, to your teacher.</div>
+    <div class="memo-box"><div class="memo-head">${c.oral7.memoMeta}</div>${c.oral7.memoBody}</div>
+    <div class="score-row"><label>Teacher score (0-10):</label><input type="number" min="0" max="10" class="score-input" id="score-oral7"></div>
+    <button class="btn btn-primary" onclick="submitOral(7)">Validate score</button>
+    <div class="result-box" id="result-oral7"></div>`;
+  return div;
+}
+function submitOral(n){
+  const input = document.getElementById('score-oral'+n);
+  const val = parseInt(input.value);
+  if(isNaN(val) || val<0 || val>10){ alert('Please enter a score between 0 and 10.'); return; }
+  finishExercise(CURRENT_LEVEL,'oral'+n,val,10,'result-oral'+n,true);
+}
+
+/* ============ FLOATING COMPANY/PRODUCT INFO (ex6) ============ */
+function updateInfoFloat(){
+  const btn = document.getElementById('info-float-btn');
+  const done = STATE.levels[CURRENT_LEVEL].ex.oral6;
+  if(done){ hideInfoFloat(); return; }
+  btn.classList.add('visible');
+  CURRENT_INFO = CONTENT[CURRENT_LEVEL].oral6;
+}
+function hideInfoFloat(){ document.getElementById('info-float-btn').classList.remove('visible'); }
+function openInfoModal(){
+  const info = CURRENT_INFO; if(!info) return;
+  let html = '';
+  if(info.company){
+    html += `<div class="info-sheet"><strong>Company</strong><br>Name: ${info.company.name}<br>Sector: ${info.company.sector}<br>Founded: ${info.company.founded}<br>Location: ${info.company.location}<br>Staff: ${info.company.staff}</div>`;
+    html += `<div class="info-sheet"><strong>Product — ${info.product.name}</strong><br>Function: ${info.product.fn}<br>Technical features: ${info.product.tech}<br>Target: ${info.product.target}<br>Price: ${info.product.price}</div>`;
+    html += `<div class="info-sheet"><strong>Key arguments</strong><ul class="arg-list">${info.args.map(a=>`<li>${a}</li>`).join('')}</ul></div>`;
+  } else if(info.client){
+    html += `<div class="info-sheet"><strong>Client file</strong><br>Client: ${info.client.name}<br>History: ${info.client.history}<br>Contract: ${info.client.contract}<br>Issues: ${info.client.issues}${info.client.impact?('<br>Impact: '+info.client.impact):''}<br>Room to manoeuvre: ${info.client.room}</div>`;
+  }
+  document.getElementById('info-modal-content').innerHTML = html;
+  document.getElementById('info-modal').classList.add('show');
+}
+function closeInfoModal(){ document.getElementById('info-modal').classList.remove('show'); }
+
+/* ============ FINISH / SAVE EXERCISE ============ */
+function finishExercise(levelKey,exKey,score,total,resultElId,isOral){
+  STATE.levels[levelKey].ex[exKey] = {score,total};
+  saveState();
+  const pass = pct(score,total)>=70;
+  const box = document.getElementById(resultElId);
+  if(box){
+    box.classList.add('show');
+    box.innerHTML = `<div class="result-score ${pass?'pass':'fail'}">${score}/${total}</div><div style="color:var(--muted);font-size:0.85rem;">${isOral?'Score recorded.':(pass?'Well done!':'Keep practising — you can redo this exercise.')}</div>`;
+  }
+  renderLevelGrid();
+  updateInfoFloat();
+}
+function resetExercise(levelKey,exKey){
+  STATE.levels[levelKey].ex[exKey] = null;
+  saveState();
+}
+function consultOrRedo(levelKey,exKey,saved,total){
+  return `<div class="consult-box">You already completed this exercise: <strong>${saved.score}/${saved.total!==undefined?saved.total:total}</strong>. You can redo it if you want to try again (this will reset your score for this exercise).</div>
+  <button class="btn btn-outline redo-btn">Redo this exercise</button>`;
+}
+
+/* ============ TEACHER DASHBOARD ============ */
+function renderTeacherDashboard(){
+  document.getElementById('teacher-student-code').textContent = STUDENT_ACCESS_CODE;
+  const box = document.getElementById('teacher-oral-content');
+  let html='';
+  LEVEL_ORDER.forEach(key=>{
+    const c = CONTENT[key];
+    html += `<details><summary>▶ ${c.roleTitle} — Exercise 6 (Oral pitch/call) &amp; Exercise 7 (Oral synthesis)</summary>
+      <div style="padding:12px 4px;">
+      <p style="font-size:0.85rem;margin-bottom:10px;"><strong>Ex.6 situation:</strong> ${c.oral6.situation}</p>
+      <p style="font-size:0.85rem;font-weight:700;margin-bottom:6px;">Ex.7 — Teacher recap (source text summary):</p>
+      <ul class="recap-list">${c.oral7.teacherRecap.map(r=>`<li>${r}</li>`).join('')}</ul>
+      </div></details>`;
+  });
+  box.innerHTML = html;
+}
+
+/* ============ PDF EXPORT ============ */
+function downloadPDF(){
+  if(typeof window.jspdf==='undefined'){
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload=generatePDF;
+    s.onerror=()=>alert('PDF generation requires an internet connection.');
+    document.head.appendChild(s);
+  } else generatePDF();
+}
+function generatePDF(){
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({unit:'mm',format:'a4'});
+  const margin=15; let y=margin;
+  doc.setFillColor(46,90,255); doc.rect(0,0,210,26,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(15);
+  doc.text('NORTHLINE SOLUTIONS - REPORT',margin,12);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9);
+  doc.text('Student: '+(STATE?STATE.id:'-')+'  |  Generated: '+new Date().toLocaleString('fr-FR'),margin,20);
+  y=34;
+  function checkPage(h){ if(y+h>280){ doc.addPage(); y=margin; } }
+  LEVEL_ORDER.forEach(key=>{
+    const st = STATE.levels[key];
+    const hasAny = Object.values(st.ex).some(e=>e);
+    if(!hasAny) return;
+    checkPage(12);
+    doc.setTextColor(20,20,40); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+    doc.text(CONTENT[key].roleTitle,margin,y); y+=7;
+    const labels = {lot1:'Ex.1 QCM Vocabulary',lot2:'Ex.2 True/False Vocabulary',lot3:'Ex.3 Matching EN-FR',lot4:'Ex.4 Matching EN-Definitions',comp:'Ex.5 Reading Comprehension',oral6:'Ex.6 Oral Pitch/Call',oral7:'Ex.7 Oral Synthesis'};
+    Object.keys(labels).forEach(k=>{
+      const e = st.ex[k];
+      checkPage(8);
+      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(60,60,70);
+      doc.text(labels[k]+': '+(e?(e.score+'/'+e.total):'not done'),margin+3,y); y+=6;
+    });
+    const total = totalForLevel(key);
+    let score=0; Object.values(st.ex).forEach(e=>{if(e)score+=e.score;});
+    checkPage(8);
+    doc.setFont('helvetica','bold'); doc.setTextColor(20,20,40);
+    doc.text('Level total: '+score+'/'+total+' ('+pct(score,total)+'%) — '+(pct(score,total)>=70?'PASSED':'not yet validated'),margin+3,y);
+    y+=12;
+  });
+  doc.setFontSize(7); doc.setTextColor(120,120,130); doc.setFont('helvetica','italic');
+  doc.text('Generated by Northline Solutions - Created by C. Iemfre',105,290,{align:'center'});
+  doc.save('Northline_'+(STATE?STATE.id:'student')+'_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
+</script>
+</body>
+</html>
